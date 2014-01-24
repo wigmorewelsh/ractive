@@ -1,6 +1,6 @@
 /*
 	
-	Ractive - v0.3.9 - 2013-12-31
+	Ractive - v0.3.9 - 2014-01-23
 	==============================================================
 
 	Next-generation DOM manipulation - http://ractivejs.org
@@ -8,7 +8,7 @@
 
 	--------------------------------------------------------------
 
-	Copyright 2013 2013 Rich Harris and contributors
+	Copyright 2014 2013 Rich Harris and contributors
 
 	Permission is hereby granted, free of charge, to any person
 	obtaining a copy of this software and associated documentation
@@ -253,83 +253,6 @@
 				//style.styleSheet.cssText = '*{-ms-event-prototype:expression(!this.addEventListener&&(this.addEventListener=addEventListener)&&(this.removeEventListener=removeEventListener))}';
 			}
 		}( win, doc ));
-	}
-
-
-	// https://github.com/jonathantneal/Polyfills-for-IE8/blob/master/getComputedStyle.js
-	if ( !win.getComputedStyle ) {
-		win.getComputedStyle = (function () {
-			function getPixelSize(element, style, property, fontSize) {
-				var
-				sizeWithSuffix = style[property],
-				size = parseFloat(sizeWithSuffix),
-				suffix = sizeWithSuffix.split(/\d/)[0],
-				rootSize;
-
-				fontSize = fontSize != null ? fontSize : /%|em/.test(suffix) && element.parentElement ? getPixelSize(element.parentElement, element.parentElement.currentStyle, 'fontSize', null) : 16;
-				rootSize = property == 'fontSize' ? fontSize : /width/i.test(property) ? element.clientWidth : element.clientHeight;
-
-				return (suffix == 'em') ? size * fontSize : (suffix == 'in') ? size * 96 : (suffix == 'pt') ? size * 96 / 72 : (suffix == '%') ? size / 100 * rootSize : size;
-			}
-
-			function setShortStyleProperty(style, property) {
-				var
-				borderSuffix = property == 'border' ? 'Width' : '',
-				t = property + 'Top' + borderSuffix,
-				r = property + 'Right' + borderSuffix,
-				b = property + 'Bottom' + borderSuffix,
-				l = property + 'Left' + borderSuffix;
-
-				style[property] = (style[t] == style[r] == style[b] == style[l] ? [style[t]]
-				: style[t] == style[b] && style[l] == style[r] ? [style[t], style[r]]
-				: style[l] == style[r] ? [style[t], style[r], style[b]]
-				: [style[t], style[r], style[b], style[l]]).join(' ');
-			}
-
-			function CSSStyleDeclaration(element) {
-				var currentStyle, style, fontSize, property;
-
-				currentStyle = element.currentStyle;
-				style = this;
-				fontSize = getPixelSize(element, currentStyle, 'fontSize', null);
-
-				for (property in currentStyle) {
-					if (/width|height|margin.|padding.|border.+W/.test(property) && style[property] !== 'auto') {
-						style[property] = getPixelSize(element, currentStyle, property, fontSize) + 'px';
-					} else if (property === 'styleFloat') {
-						style.float = currentStyle[property];
-					} else {
-						style[property] = currentStyle[property];
-					}
-				}
-
-				setShortStyleProperty(style, 'margin');
-				setShortStyleProperty(style, 'padding');
-				setShortStyleProperty(style, 'border');
-
-				style.fontSize = fontSize + 'px';
-
-				return style;
-			}
-
-			CSSStyleDeclaration.prototype = {
-				constructor: CSSStyleDeclaration,
-				getPropertyPriority: function () {},
-				getPropertyValue: function ( prop ) {
-					return this[prop] || '';
-				},
-				item: function () {},
-				removeProperty: function () {},
-				setProperty: function () {},
-				getPropertyCSSValue: function () {}
-			};
-
-			function getComputedStyle(element) {
-				return new CSSStyleDeclaration(element);
-			}
-
-			return getComputedStyle;
-		}());
 	}
 
 }( typeof window !== 'undefined' ? window : this ));
@@ -5300,7 +5223,80 @@ var utils_fillGaps = function () {
             return target;
         };
     }();
-var render_DomFragment_Element_shared_executeTransition_Transition = function (isClient, createElement, warn, isNumeric, isArray, camelCase, fillGaps, StringFragment) {
+var utils_getComputedStyle = function () {
+        
+        if (typeof window === 'undefined') {
+            return;
+        }
+        if (typeof window.getComputedStyle === 'function') {
+            return window.getComputedStyle;
+        }
+        return function () {
+            function getPixelSize(element, style, property, fontSize) {
+                var sizeWithSuffix = style[property], size = parseFloat(sizeWithSuffix), suffix = sizeWithSuffix.split(/\d/)[0], rootSize;
+                fontSize = fontSize != null ? fontSize : /%|em/.test(suffix) && element.parentElement ? getPixelSize(element.parentElement, element.parentElement.currentStyle, 'fontSize', null) : 16;
+                rootSize = property == 'fontSize' ? fontSize : /width/i.test(property) ? element.clientWidth : element.clientHeight;
+                return suffix == 'em' ? size * fontSize : suffix == 'in' ? size * 96 : suffix == 'pt' ? size * 96 / 72 : suffix == '%' ? size / 100 * rootSize : size;
+            }
+            function setShortStyleProperty(style, property) {
+                var borderSuffix = property == 'border' ? 'Width' : '', t = property + 'Top' + borderSuffix, r = property + 'Right' + borderSuffix, b = property + 'Bottom' + borderSuffix, l = property + 'Left' + borderSuffix;
+                style[property] = (style[t] == style[r] == style[b] == style[l] ? [style[t]] : style[t] == style[b] && style[l] == style[r] ? [
+                    style[t],
+                    style[r]
+                ] : style[l] == style[r] ? [
+                    style[t],
+                    style[r],
+                    style[b]
+                ] : [
+                    style[t],
+                    style[r],
+                    style[b],
+                    style[l]
+                ]).join(' ');
+            }
+            function CSSStyleDeclaration(element) {
+                var currentStyle, style, fontSize, property;
+                currentStyle = element.currentStyle;
+                style = this;
+                fontSize = getPixelSize(element, currentStyle, 'fontSize', null);
+                for (property in currentStyle) {
+                    if (/width|height|margin.|padding.|border.+W/.test(property) && style[property] !== 'auto') {
+                        style[property] = getPixelSize(element, currentStyle, property, fontSize) + 'px';
+                    } else if (property === 'styleFloat') {
+                        style.float = currentStyle[property];
+                    } else {
+                        style[property] = currentStyle[property];
+                    }
+                }
+                setShortStyleProperty(style, 'margin');
+                setShortStyleProperty(style, 'padding');
+                setShortStyleProperty(style, 'border');
+                style.fontSize = fontSize + 'px';
+                return style;
+            }
+            CSSStyleDeclaration.prototype = {
+                constructor: CSSStyleDeclaration,
+                getPropertyPriority: function () {
+                },
+                getPropertyValue: function (prop) {
+                    return this[prop] || '';
+                },
+                item: function () {
+                },
+                removeProperty: function () {
+                },
+                setProperty: function () {
+                },
+                getPropertyCSSValue: function () {
+                }
+            };
+            function getComputedStyle(element) {
+                return new CSSStyleDeclaration(element);
+            }
+            return getComputedStyle;
+        }();
+    }();
+var render_DomFragment_Element_shared_executeTransition_Transition = function (isClient, createElement, warn, isNumeric, isArray, camelCase, fillGaps, getComputedStyle, StringFragment) {
         
         var Transition, testStyle, vendors, vendorPattern, unprefixPattern, prefixCache, CSS_TRANSITIONS_ENABLED, TRANSITION, TRANSITION_DURATION, TRANSITION_PROPERTY, TRANSITION_TIMING_FUNCTION, TRANSITIONEND;
         if (!isClient) {
@@ -5558,7 +5554,7 @@ var render_DomFragment_Element_shared_executeTransition_Transition = function (i
             return hyphenated;
         }
         return Transition;
-    }(config_isClient, utils_createElement, utils_warn, utils_isNumeric, utils_isArray, utils_camelCase, utils_fillGaps, render_StringFragment__StringFragment);
+    }(config_isClient, utils_createElement, utils_warn, utils_isNumeric, utils_isArray, utils_camelCase, utils_fillGaps, utils_getComputedStyle, render_StringFragment__StringFragment);
 var render_DomFragment_Element_shared_executeTransition__executeTransition = function (warn, Transition) {
         
         return function (descriptor, root, owner, contextStack, isIntro) {

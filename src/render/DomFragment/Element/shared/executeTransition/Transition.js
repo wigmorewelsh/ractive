@@ -6,6 +6,7 @@ define([
 	'utils/isArray',
 	'utils/camelCase',
 	'utils/fillGaps',
+	'utils/getComputedStyle',
 	'render/StringFragment/_StringFragment'
 ], function (
 	isClient,
@@ -15,6 +16,7 @@ define([
 	isArray,
 	camelCase,
 	fillGaps,
+	getComputedStyle,
 	StringFragment
 ) {
 
