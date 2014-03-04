@@ -18,7 +18,7 @@ define([
 		get = circular.get;
 	});
 
-	return function ( ractive, ref, fragment ) {
+	return function resolveRef ( ractive, ref, fragment ) {
 		var context, contextKeys, keys, lastKey, postfix, parentKeypath, parentValue, wrapped;
 
 		ref = normaliseKeypath( ref );
@@ -79,7 +79,7 @@ define([
 				parentValue = wrapped.get();
 			}
 
-			if ( typeof parentValue === 'object' && parentValue !== null && lastKey in parentValue ) {
+			if ( parentValue && ( typeof parentValue === 'object' || typeof parentValue === 'function' ) && lastKey in parentValue ) {
 				return context + '.' + ref;
 			}
 		} while ( fragment = fragment.parent );

@@ -9,9 +9,7 @@ define([
 	'use strict';
 
 	return function updateSection ( section, value ) {
-		var fragmentOptions;
-
-		fragmentOptions = {
+		var fragmentOptions = {
 			descriptor: section.descriptor.f,
 			root:       section.root,
 			pNode:      section.parentFragment.pNode,
@@ -34,7 +32,7 @@ define([
 
 
 		// if value is a hash...
-		else if ( isObject( value ) ) {
+		else if ( isObject( value ) || typeof value === 'function' ) {
 			if ( section.descriptor.i ) {
 				updateListObjectSection( section, value, fragmentOptions );
 			} else {

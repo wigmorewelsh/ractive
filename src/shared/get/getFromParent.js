@@ -1,23 +1,27 @@
 define([
-	'global/failedLookups',
+	'circular',
 	'shared/createComponentBinding',
-	'Ractive/prototype/shared/replaceData'
+	'shared/set',
+	'shared/get/FAILED_LOOKUP'
 ], function (
-	failedLookups,
+	circular,
 	createComponentBinding,
-	replaceData
+	set,
+	FAILED_LOOKUP
 ) {
 
 	'use strict';
+
+	var get;
+
+	circular.push( function () {
+		get = circular.get;
+	});
 
 	return function getFromParent ( child, keypath ) {
 		var parent, fragment, keypathToTest, value;
 
 		parent = child._parent;
-
-		if ( failedLookups( child._guid + keypath ) ) {
-			return;
-		}
 
 		fragment = child.component.parentFragment;
 		do {
@@ -26,7 +30,7 @@ define([
 			}
 
 			keypathToTest = fragment.context + '.' + keypath;
-			value = parent.get( keypathToTest );
+			value = get( parent, keypathToTest );
 
 			if ( value !== undefined ) {
 				createLateComponentBinding( parent, child, keypathToTest, keypath, value );
@@ -34,18 +38,17 @@ define([
 			}
 		} while ( fragment = fragment.parent );
 
-		value = parent.get( keypath );
+		value = get( parent, keypath );
 		if ( value !== undefined ) {
 			createLateComponentBinding( parent, child, keypath, keypath, value );
 			return value;
 		}
 
-		// Short-circuit this process next time
-		failedLookups.add( child._guid + keypath );
+		return FAILED_LOOKUP;
 	};
 
 	function createLateComponentBinding ( parent, child, parentKeypath, childKeypath, value ) {
-		replaceData( child, childKeypath, value );
+		set( child, childKeypath, value, true );
 		createComponentBinding( child.component, parent, parentKeypath, childKeypath );
 	}
 

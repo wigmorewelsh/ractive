@@ -34,7 +34,7 @@ define([
 
 	return function extend ( childProps ) {
 
-		var Parent = this, Child;
+		var Parent = this, Child, adaptor, i;
 
 		// if we're extending with another Ractive instance, inherit its
 		// prototype methods and default options as well
@@ -50,11 +50,28 @@ define([
 		Child.prototype = create( Parent.prototype );
 		Child.prototype.constructor = Child;
 
+		defineProperties( Child, {
+			extend: { value: Parent.extend },
+
+			// each component needs a guid, for managing CSS etc
+			_guid: { value: getGuid() }
+		});
+
 		// Inherit options from parent
 		inheritFromParent( Child, Parent );
 
 		// Add new prototype methods and init options
 		inheritFromChildProps( Child, childProps );
+
+		// Special case - adaptors. Convert to function if possible
+		if ( Child.adaptors && ( i = Child.defaults.adapt.length ) ) {
+			while ( i-- ) {
+				adaptor = Child.defaults.adapt[i];
+				if ( typeof adaptor === 'string' ) {
+					Child.defaults.adapt[i] = Child.adaptors[ adaptor ] || adaptor;
+				}
+			}
+		}
 
 		// Parse template and any partials that need it
 		if ( childProps.template ) { // ignore inherited templates!
@@ -62,13 +79,6 @@ define([
 			extractInlinePartials( Child, childProps );
 			conditionallyParsePartials( Child );
 		}
-
-		defineProperties( Child, {
-			extend: { value: Parent.extend },
-
-			// each component needs a guid, for managing CSS etc
-			_guid: { value: getGuid() }
-		});
 
 		return Child;
 	};
