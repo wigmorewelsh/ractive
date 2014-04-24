@@ -10,6 +10,8 @@ define([
 
 	'use strict';
 
+	var defineProperties;
+
 	try {
 		try {
 			Object.defineProperties({}, { test: { value: 0 } });
@@ -22,9 +24,9 @@ define([
 			Object.defineProperties( createElement( 'div' ), { test: { value: 0 } });
 		}
 
-		return Object.defineProperties;
+		defineProperties = Object.defineProperties;
 	} catch ( err ) {
-		return function ( obj, props ) {
+		defineProperties = function ( obj, props ) {
 			var prop;
 
 			for ( prop in props ) {
@@ -34,4 +36,7 @@ define([
 			}
 		};
 	}
+
+	return defineProperties;
+
 });

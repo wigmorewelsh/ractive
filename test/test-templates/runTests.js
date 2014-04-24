@@ -4,22 +4,17 @@
 
 	var isBuild, config, i, prefixedModules = [];
 
-	config = {
-		baseUrl: '../<%= levels %>src/',
-		paths: {
-			modules: '../test/modules',
-			samples: '../test/samples',
-			vendor: '../test/vendor'
-		}
-	};	
+	System.paths['*'] = '../<%= levels %>es6/*.js';
+
+	System.paths['modules/*'] = '../modules/*.js';
+	System.paths['samples/*'] = '../samples/*.js';
+	System.paths['vendor/*'] = '../vendor/*.js';
 
 	if ( /build=true/.test( window.location.search ) || /phantomjs/i.test( window.navigator.userAgent ) ) {
 		isBuild = true;
 		QUnit.config.autostart = false;
-		config.paths.ractive = '../tmp/ractive-legacy';
+		System.paths['ractive'] = '../tmp/ractive-legacy';
 	}
-
-	require.config( config );
 
 	// can't use .map() because of IE...
 	i = _modules.length;
@@ -27,18 +22,26 @@
 		prefixedModules[i] = 'modules/' + _modules[i];
 	}
 
-	require( [ 'ractive' ].concat( prefixedModules ), function ( Ractive ) {
-		window.Ractive = Ractive;
+	Promise.all(
+		[ 'ractive' ].concat( prefixedModules ).map( function ( id ) {
+			return System.import( id );
+		})
+	).then( function ( deps ) {
+		var Ractive = window.Ractive = deps.shift().default;
+
+		console.log( deps );
 
 		Ractive.defaults.magic = /magic=true/.test( window.location.search );
 
-		Array.prototype.slice.call( arguments, 1 ).forEach( function ( testSet ) {
+		deps.forEach( function ( testSet ) {
 			testSet();
 		});
 
 		if ( isBuild ) {
 			QUnit.start();
 		}
+	}).catch( function ( err ) {
+		setTimeout( function () { throw err; });
 	});
 
 }());

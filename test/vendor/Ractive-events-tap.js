@@ -34,8 +34,15 @@
 
 	'use strict';
 
+	// System JS
+	if ( typeof System !== 'undefined' && System.import ) {
+		System.import( 'ractive' ).then( function ( lib ) {
+			factory( lib.default );
+		});
+	}
+
 	// Common JS (i.e. browserify) environment
-	if ( typeof module !== 'undefined' && module.exports && typeof require === 'function' ) {
+	else if ( typeof module !== 'undefined' && module.exports && typeof require === 'function' ) {
 		factory( require( 'ractive' ) );
 	}
 
@@ -56,6 +63,8 @@
 }( typeof window !== 'undefined' ? window : this, function ( Ractive ) {
 
 	'use strict';
+
+	console.log( 'Ractive', Ractive );
 
 	var tap, doc = document;
 

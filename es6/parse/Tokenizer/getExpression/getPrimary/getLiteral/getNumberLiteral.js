@@ -1,0 +1,18 @@
+import types from 'config/types';
+import makeRegexMatcher from 'parse/Tokenizer/utils/makeRegexMatcher';
+
+// bulletproof number regex from https://gist.github.com/Rich-Harris/7544330
+var getNumber = makeRegexMatcher( /^(?:[+-]?)(?:(?:(?:0|[1-9]\d*)?\.\d+)|(?:(?:0|[1-9]\d*)\.)|(?:0|[1-9]\d*))(?:[eE][+-]?\d+)?/ );
+
+export default function ( tokenizer ) {
+    var result;
+
+    if ( result = getNumber( tokenizer ) ) {
+        return {
+            t: types.NUMBER_LITERAL,
+            v: result
+        };
+    }
+
+    return null;
+};

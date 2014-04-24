@@ -10,54 +10,61 @@ define([
 
 	'use strict';
 
-	var div, methodNames, unprefixed, prefixed, i, j, makeFunction;
+	var matches, div, methodNames, unprefixed, prefixed, i, j, makeFunction;
 
 	if ( !isClient ) {
-		return;
+		matches = null;
 	}
 
-	div = createElement( 'div' );
+	else {
+		div = createElement( 'div' );
 
-	methodNames = [ 'matches', 'matchesSelector' ];
-
-	makeFunction = function ( methodName ) {
-		return function ( node, selector ) {
-			return node[ methodName ]( selector );
+		makeFunction = function ( methodName ) {
+			return function ( node, selector ) {
+				return node[ methodName ]( selector );
+			};
 		};
-	};
 
-	i = methodNames.length;
-	while ( i-- ) {
-		unprefixed = methodNames[i];
+		methodNames = [ 'matches', 'matchesSelector' ];
 
-		if ( div[ unprefixed ] ) {
-			return makeFunction( unprefixed );
+		i = methodNames.length;
+		while ( i-- ) {
+			unprefixed = methodNames[i];
+
+			if ( div[ unprefixed ] ) {
+				matches = makeFunction( unprefixed );
+			} else {
+				j = vendors.length;
+				while ( j-- ) {
+					prefixed = vendors[i] + unprefixed.substr( 0, 1 ).toUpperCase() + unprefixed.substring( 1 );
+
+					if ( div[ prefixed ] ) {
+						matches = makeFunction( prefixed );
+						break;
+					}
+				}
+			}
 		}
 
-		j = vendors.length;
-		while ( j-- ) {
-			prefixed = vendors[i] + unprefixed.substr( 0, 1 ).toUpperCase() + unprefixed.substring( 1 );
+		// IE8...
+		if ( !matches ) {
+			matches = function ( node, selector ) {
+				var nodes, i;
 
-			if ( div[ prefixed ] ) {
-				return makeFunction( prefixed );
-			}
+				nodes = ( node.parentNode || node.document ).querySelectorAll( selector );
+
+				i = nodes.length;
+				while ( i-- ) {
+					if ( nodes[i] === node ) {
+						return true;
+					}
+				}
+
+				return false;
+			};
 		}
 	}
 
-	// IE8...
-	return function ( node, selector ) {
-		var nodes, i;
-
-		nodes = ( node.parentNode || node.document ).querySelectorAll( selector );
-
-		i = nodes.length;
-		while ( i-- ) {
-			if ( nodes[i] === node ) {
-				return true;
-			}
-		}
-
-		return false;
-	};
+	return matches;
 
 });

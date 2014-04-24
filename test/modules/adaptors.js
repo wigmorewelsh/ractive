@@ -6,7 +6,7 @@ define([ 'ractive' ], function ( Ractive ) {
 
 		var fixture, Model, adaptor;
 
-		module( 'Adaptors' );
+		QUnit.module( 'Adaptors' );
 
 		// setup
 		fixture = document.getElementById( 'qunit-fixture' );

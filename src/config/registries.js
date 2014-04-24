@@ -2,7 +2,7 @@ define( function () {
 
 	'use strict';
 
-	return [,
+	return [
 		'data',
 		'computed',
 		'adaptors',

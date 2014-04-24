@@ -8,9 +8,11 @@ define([
 
 	'use strict';
 
+	var createElement;
+
 	// Test for SVG support
 	if ( !svg ) {
-		return function ( type, ns ) {
+		createElement = function ( type, ns ) {
 			if ( ns && ns !== namespaces.html ) {
 				throw 'This browser does not support namespaces other than http://www.w3.org/1999/xhtml. The most likely cause of this error is that you\'re trying to render SVG in an older browser. See http://docs.ractivejs.org/latest/svg-and-older-browsers for more information';
 			}
@@ -18,7 +20,7 @@ define([
 			return document.createElement( type );
 		};
 	} else {
-		return function ( type, ns ) {
+		createElement = function ( type, ns ) {
 			if ( !ns || ns === namespaces.html ) {
 				return document.createElement( type );
 			}
@@ -26,5 +28,7 @@ define([
 			return document.createElementNS( ns, type );
 		};
 	}
+
+	return createElement;
 
 });
