@@ -8,8 +8,10 @@ env:
   global:
   - GH_REF: github.com/ractivejs/ractive.git
   - CDN_REF: github.com/ractivejs/cdn.ractivejs.org.git
-  - secure: "nlnXJW/imf/w6qdTd7UCpRqLhLioxU6fllJPbP1DZr/9rp44HNVSPNxxGrA808VDXQ1ccpXBxIV9mgIi4Q/G0FUILA5NsSGYdQE00A+Lw3qnvv5FQ7Qoux44BKYi4L1W+4Zi3NEr7TAL+/dHCAk5k/ZKLTCCxiziAEw3M+akE4A="
+  - secure: nlnXJW/imf/w6qdTd7UCpRqLhLioxU6fllJPbP1DZr/9rp44HNVSPNxxGrA808VDXQ1ccpXBxIV9mgIi4Q/G0FUILA5NsSGYdQE00A+Lw3qnvv5FQ7Qoux44BKYi4L1W+4Zi3NEr7TAL+/dHCAk5k/ZKLTCCxiziAEw3M+akE4A=
+  - secure: pVfHDEMbA9BSHQT3tmbvjJu/oXSdeXI3V7pSXwtCdn0Y1JuxnxSdfEcjdWXgZ0fs/OsgVRiKvpVyRQ5KO9YFgmQuvqT8To9QG7DbwswGt8JzdC2cPkoZr9lp+1X5nDoEcrloosh38pv5z0NHGi7NhzS5/gwSeWntTc1iSW5Ag94=
+  - secure: iGcBfU5oaTsF7mc06xrG5CWlhPF2wUQEMVfdOYKDdEwvgJLBTbDsvVhHlHj6cWEf1qUNrgf04tDK9sOzr3BcnrrxMFrKEFhHF6uC3y6SrzX+ZF51mRauo65L44y2ZAJMqsfZD2oOTIclji+pkF2+NCUHhCxZceIlxvEm4gzkOc8=
 branches:
   only:
-    - master
-    - dev
+  - master
+  - dev
