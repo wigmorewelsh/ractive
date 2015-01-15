@@ -40,7 +40,7 @@ export default function Viewmodel$get ( keypath, options ) {
 
 		// Is this a wrapped property?
 		else if ( wrapped = this.wrapped[ keypathStr ] ) {
-			value = wrapped.value;
+			value = wrapped.get();
 		}
 
 		// Is it the root?

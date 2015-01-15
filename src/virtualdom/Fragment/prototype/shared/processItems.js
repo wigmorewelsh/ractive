@@ -17,7 +17,7 @@ export default function processItems ( items, values, guid, counter ) {
 		placeholderId = guid + '-' + counter++;
 
 		if ( item.keypath && ( wrapped = item.root.viewmodel.wrapped[ item.keypath.str ] ) ) {
-			value = wrapped.value;
+			value = wrapped.get();
 		} else {
 			value = item.getValue();
 		}

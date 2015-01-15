@@ -10,7 +10,6 @@ export default function Viewmodel$adapt ( keypath, value ) {
 
 		if ( adaptor.filter( value, keypath, ractive ) ) {
 			wrapped = this.wrapped[ keypath ] = adaptor.wrap( ractive, value, keypath, getPrefixer( keypath ) );
-			wrapped.value = value;
 			return value;
 		}
 	}
