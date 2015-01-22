@@ -45,12 +45,12 @@ export default function Viewmodel$set ( keypath, value, options = {} ) {
 	}
 
 	if ( !options.silent ) {
-		this.mark( keypath );
+		this.mark( keypath, { keepExistingWrapper: keepExistingWrapper } );
 	} else {
 		// We're setting a parent of the original target keypath (i.e.
 		// creating a fresh branch) - we need to clear the cache, but
 		// not mark it as a change
-		this.clearCache( keypath.str );
+		this.clearCache( keypath.str, keepExistingWrapper );
 	}
 }
 
